@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-backend
+  namespace: student-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-backend
+  template:
+    metadata:
+      labels:
+        app: student-backend
+    spec:
+      containers:
+        - name: student-backend
+          image: student-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongodb-service:27017/studentdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-backend-service
+  namespace: student-management
+spec:
+  selector:
+    app: student-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP
